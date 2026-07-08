@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SillyxPilot</title>
+  <link rel="icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="toolbar">
+    <div class="com-stack">
+      <div class="com"><span>COM1</span><span class="freq" id="com1">---.---</span>
+        <span class="txrx"><span class="pill">TX</span><span class="pill">RX</span></span></div>
+      <div class="com"><span>COM2</span><span class="freq" id="com2">---.---</span>
+        <span class="txrx"><span class="pill">TX</span><span class="pill">RX</span></span></div>
+    </div>
+    <div class="brand">
+      <img src="assets/logo.svg" alt="SillyxPilot" />
+      <div>
+        <div class="name">Silly<b>x</b>Pilot</div>
+        <div class="sub">keeping an eye out while you're away</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="tb-buttons">
+      <button class="tb-btn" id="notif-btn" title="Allow desktop notifications and sound">Turn on notifications</button>
+      <button class="tb-btn" data-tab="settings">Settings</button>
+    </div>
+  </div>
+
+  <div class="awareness">
+    <div class="sup-badge" id="sup-badge">
+      <span>Supervisors online</span><span class="n" id="sup-count">0</span>
+    </div>
+    <div class="meta" id="awareness-meta">Connecting to the VATSIM feed…</div>
+    <div class="net-chip">
+      <span class="dot off" id="net-dot"></span>
+      <span id="net-status">Network offline</span>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <h2>Controllers in range</h2>
+      <div id="controllers"></div>
+    </aside>
+
+    <main class="main">
+      <div class="tabs">
+        <button class="tab active" data-tab="messages">Messages</button>
+        <button class="tab" data-tab="map">Map</button>
+        <button class="tab" data-tab="alerts">Alerts <span class="badge" id="alert-badge" style="display:none">0</span></button>
+        <button class="tab" data-tab="network">Network</button>
+        <button class="tab" data-tab="notes">Notes</button>
+        <button class="tab" data-tab="settings">Settings</button>
+      </div>
+
+      <section class="panel active" data-panel="messages">
+        <div class="toolbar-row">
+          <input type="text" id="search" class="grow" placeholder="Search your chat log by callsign, word, anything" />
+          <label class="filter-chip"><input type="checkbox" class="kfilter" value="private" checked /> private</label>
+          <label class="filter-chip"><input type="checkbox" class="kfilter" value="radio" checked /> radio</label>
+          <label class="filter-chip"><input type="checkbox" class="kfilter" value="broadcast" checked /> broadcast</label>
+          <label class="filter-chip"><input type="checkbox" class="kfilter" value="server" checked /> server</label>
+        </div>
+        <div class="log" id="log"></div>
+      </section>
+
+      <section class="panel" data-panel="map">
+        <div class="map-wrap">
+          <div id="map"></div>
+          <div class="map-side">
+            <div class="map-card" id="self-card">
+              <div class="mc-title">Your aircraft</div>
+              <div class="mc-body" id="self-body">Waiting for your position from the VATSIM feed…</div>
+            </div>
+            <div class="map-card">
+              <div class="mc-title">Who's watching you now</div>
+              <div class="mc-body" id="watching-body">Waiting for your position.</div>
+            </div>
+            <div class="map-card">
+              <div class="mc-title">Airspace coming up</div>
+              <div class="mc-hint">SillyPilot looks ahead along your route and tells you which sectors are staffed.</div>
+              <div class="mc-body" id="predict-body">Waiting for your position.</div>
+            </div>
+            <div class="map-credit">Aircraft icon from <a href="https://github.com/VATSIM-Radar/vatsim-radar" target="_blank" rel="noopener">VATSIM Radar</a>, used under CC BY-NC 4.0.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="alerts">
+        <div class="log" id="alerts"></div>
+      </section>
+
+      <section class="panel" data-panel="network">
+        <div id="net-gate" class="net-gate">
+          <div class="gate-card">
+            <h3>Pick a username</h3>
+            <p>This is the name other pilots see when you chat. Keep it friendly. No profanity or slurs.</p>
+            <div class="gate-row">
+              <input type="text" id="username-input" placeholder="e.g. Fahmi or GIA417" maxlength="24" />
+              <button class="btn" id="username-save">Join</button>
+            </div>
+            <div class="gate-error" id="username-error"></div>
+          </div>
+        </div>
+        <div id="net-room" style="display:none;flex:1;flex-direction:column;min-height:0">
+          <div class="net-users">Chatting as <b id="net-handle">you</b> · <span id="net-count">0</span> pilots active recently <span id="net-users"></span>
+            <button class="link-btn" id="change-username">change</button></div>
+          <div class="net-log" id="net-log"></div>
+          <div class="net-input">
+            <input type="text" id="net-text" placeholder="Say something to other SillyPilot users… (Enter to send)" />
+            <button class="btn" id="net-send">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="notes">
+        <div class="toolbar-row"><span class="filter-chip">Scratch notes, saved in this browser just for you</span></div>
+        <div class="log"><textarea id="notes" spellcheck="false"></textarea></div>
+      </section>
+
+      <section class="panel" data-panel="settings">
+        <div class="settings" id="settings"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="statusbar">
+    <div class="s-item">Callsign <b id="st-callsign">·</b></div>
+    <div class="s-item">CID <b id="st-cid">·</b></div>
+    <div class="s-item">xPilot <b id="st-connected">not connected yet</b></div>
+    <div class="spacer"></div>
+    <div class="s-item">Live <b id="st-ws">connecting…</b></div>
+  </div>
+
+  <div id="toasts"></div>
+  <audio id="alert-sound" src="/sounds/NewMessage.wav" preload="auto"></audio>
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AssemblyName>xPilot.PluginSdk</AssemblyName>
+    <RootNamespace>Vatsim.Xpilot.PluginSdk</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>embedded</DebugType>
+    <!-- Must match the AssemblyVersion embedded in the real xPilot 4.0.0-beta.6 client exactly.
+         .NET treats same-named types from differently-versioned assemblies as distinct,
+         incompatible types, so a mismatch here breaks plugin loading with a MissingMethodException
+         even though the source code is identical. Found by grepping strings out of xPilot.exe. -->
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <Version>4.0.0-beta.6</Version>
+  </PropertyGroup>
+</Project>

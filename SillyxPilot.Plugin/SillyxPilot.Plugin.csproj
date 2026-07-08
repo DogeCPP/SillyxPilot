@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>SillyxPilot.Plugin</AssemblyName>
+    <RootNamespace>SillyxPilot.Plugin</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <Compile Include="../SillyxPilot.Host/**/*.cs" Exclude="../SillyxPilot.Host/bin/**/*.cs;../SillyxPilot.Host/obj/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <Content Include="../SillyxPilot.Host/wwwroot/**/*"
+             Link="SillyxPilot/wwwroot/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ProjectReference Include="../xPilot.PluginSdk/xPilot.PluginSdk.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
